@@ -48,7 +48,7 @@ The first release uses these assumptions:
 11. Returning an item requires a borrower return submission and lender acceptance.
 12. Reviews cover integrity or item care, punctuality, and communication.
 13. Missed return deadlines create automatic reliability penalties.
-14. English is the initial interface language.
+14. German is the default interface language. English is also available.
 
 ### 2.3 Out of scope for the MVP
 

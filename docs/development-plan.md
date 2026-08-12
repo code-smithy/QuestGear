@@ -8,6 +8,7 @@ This plan translates the requirements contract into an implementation sequence. 
 ## Guiding Principles
 
 - Ship vertical slices that include database migrations, Row Level Security, frontend behavior, tests, and documentation.
+- Support German and English user-facing copy from the start, with German as the default locale.
 - Keep trusted business rules in Supabase functions or Edge Functions, especially loan state changes, reservation conflict checks, reminders, reviews, and reliability scoring.
 - Keep the browser responsible for presentation, validation hints, and invoking trusted operations, not for enforcing protected state transitions.
 - Treat RLS tests as first-class feature tests. A feature is incomplete if authorization is implemented only in React.
@@ -25,6 +26,7 @@ Deliverables:
 - Formatting, linting, unit test, component test, and Playwright setup.
 - React Router configured with `HashRouter`.
 - TanStack Query provider and app-level error/loading patterns.
+- Typed frontend i18n foundation with German default, English support, persisted locale choice, and a language switcher.
 - Supabase client initialization using public Vite environment variables.
 - Environment validation and `.env.example`.
 - GitHub Actions workflow for typecheck, lint, tests, build, and Pages deployment.
@@ -47,6 +49,7 @@ Deliverables:
 - Supabase Discord OAuth integration points in the frontend.
 - Session restore, auth state listener, logout, and protected route handling.
 - `profiles` migration, profile creation trigger, constraints, indexes, and RLS.
+- Preferred locale field on profiles so the language setting can follow authenticated users across devices.
 - Onboarding form for display name, region, time zone, and reminder lead days.
 - Settings page for editable profile fields and notification preferences.
 - Public profile view that excludes private data.
@@ -223,6 +226,7 @@ Authoritative rules that protect data integrity must also exist in the database 
 ### UI And Accessibility
 
 - Build loading, empty, error, success, and unauthorized states with every feature.
+- Add German and English copy for every user-facing string in the same change that introduces the UI.
 - Prefer forms with explicit labels, field-level errors, and keyboard-friendly controls.
 - Keep responsive behavior part of initial implementation, not a final polish pass.
 - Render user-provided text as plain text.
