@@ -100,6 +100,12 @@ textarea {
   font-weight: 700;
 }
 
+.header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .language-switcher select {
   min-height: 2.25rem;
   border: 1px solid #cfc6b5;
@@ -205,11 +211,123 @@ h2 {
   cursor: pointer;
 }
 
+.secondary-button {
+  min-height: 2.25rem;
+  border: 1px solid #cfc6b5;
+  border-radius: 6px;
+  padding: 0.45rem 0.75rem;
+  color: #17211b;
+  background: #fffdfa;
+  font-weight: 800;
+  cursor: pointer;
+}
+
 .primary-button:focus-visible,
-.primary-button:hover {
+.primary-button:hover,
+.secondary-button:focus-visible,
+.secondary-button:hover {
   background: #173c31;
+  color: #fff;
   outline: 3px solid #a7c7ba;
   outline-offset: 2px;
+}
+
+.profile-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  width: min(48rem, 100%);
+}
+
+.profile-form label {
+  display: grid;
+  gap: 0.35rem;
+  color: #39443d;
+  font-weight: 800;
+}
+
+.profile-form input,
+.profile-form select,
+.profile-form textarea {
+  width: 100%;
+  border: 1px solid #cfc6b5;
+  border-radius: 6px;
+  padding: 0.65rem 0.75rem;
+  color: #17211b;
+  background: #fffdfa;
+  font-weight: 500;
+}
+
+.profile-form input:focus-visible,
+.profile-form select:focus-visible,
+.profile-form textarea:focus-visible {
+  outline: 3px solid #a7c7ba;
+  outline-offset: 2px;
+}
+
+.checkbox-field {
+  align-content: start;
+  grid-template-columns: auto minmax(0, 1fr);
+  margin-top: 1.9rem;
+}
+
+.checkbox-field input {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.2rem;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.field-error,
+.alert {
+  color: #8a271d;
+  font-weight: 700;
+}
+
+.success {
+  color: #215243;
+  font-weight: 800;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.profile-heading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.avatar {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.profile-facts {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.profile-facts div {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.profile-facts dt {
+  color: #4c564f;
+  font-weight: 800;
+}
+
+.profile-facts dd {
+  margin: 0;
 }
 
 @media (max-width: 720px) {
@@ -225,5 +343,19 @@ h2 {
 
   .summary-grid {
     grid-template-columns: 1fr;
+  }
+
+  .header-actions,
+  .profile-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .profile-form {
+    grid-template-columns: 1fr;
+  }
+
+  .checkbox-field {
+    margin-top: 0;
   }
 }

@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
+import { useAuth } from "@/features/auth/useAuth";
 import { LanguageSwitcher } from "@/features/settings/LanguageSwitcher";
 import { useI18n } from "@/lib/i18n/useI18n";
 import type { TranslationKey } from "@/lib/i18n/translations";
@@ -9,11 +10,13 @@ const navItems: Array<{ to: string; labelKey: TranslationKey }> = [
   { to: "/inventory", labelKey: "nav.inventory" },
   { to: "/requests", labelKey: "nav.requests" },
   { to: "/loans", labelKey: "nav.loans" },
-  { to: "/notifications", labelKey: "nav.notifications" }
+  { to: "/notifications", labelKey: "nav.notifications" },
+  { to: "/settings", labelKey: "nav.settings" }
 ];
 
 export function AppLayout() {
   const { t } = useI18n();
+  const { signOut } = useAuth();
 
   return (
     <div className="app-shell">
@@ -31,7 +34,12 @@ export function AppLayout() {
             </NavLink>
           ))}
         </nav>
-        <LanguageSwitcher />
+        <div className="header-actions">
+          <LanguageSwitcher />
+          <button type="button" className="secondary-button" onClick={() => void signOut()}>
+            {t("auth.logout")}
+          </button>
+        </div>
       </header>
       <main className="main-content">
         <Outlet />
