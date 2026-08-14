@@ -201,7 +201,7 @@ export function ProfileForm({
                   message={locationErrors?.publicRegion?.message}
                 />
               </label>
-              <label>
+              <label className="profile-location-wide">
                 <span>{t("profile.locationPrivateAddress")}</span>
                 <input
                   autoComplete="street-address"
@@ -217,7 +217,7 @@ export function ProfileForm({
                   message={locationErrors?.privateAddress?.message}
                 />
               </label>
-              <label>
+              <label className="profile-location-wide">
                 <span>{t("profile.locationMapUrl")}</span>
                 <input
                   aria-label={t("profile.locationMapUrl")}

@@ -341,11 +341,22 @@ h2 {
 }
 
 .profile-location-row {
-  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+}
+
+.profile-location-wide {
+  grid-column: 1 / -1;
 }
 
 .compact-checkbox {
+  align-self: center;
   margin-top: 0;
+}
+
+.profile-location-row > .secondary-button {
+  align-self: end;
+  justify-self: start;
 }
 
 .profile-form input:focus-visible,
