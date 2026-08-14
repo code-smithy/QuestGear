@@ -7,6 +7,8 @@ lend, borrow, and track physical gaming gear.
 
 - [Requirements](docs/tabletop-lending-web-requirements.md)
 - [Development plan](docs/development-plan.md)
+- [Production configuration](docs/production-configuration.md)
+- [Release checklist](docs/release-checklist.md)
 
 ## Local Development
 
@@ -49,6 +51,7 @@ pnpm typecheck
 pnpm lint
 pnpm test
 pnpm build
+pnpm audit:secrets
 pnpm test:e2e
 ```
 

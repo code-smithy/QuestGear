@@ -55,6 +55,9 @@ jobs:
           VITE_SITE_URL: ${{ vars.VITE_SITE_URL || format('https://{0}.github.io/{1}/', github.repository_owner, github.event.repository.name) }}
           VITE_BASE_PATH: ${{ vars.VITE_BASE_PATH || format('/{0}/', github.event.repository.name) }}
 
+      - name: Secret audit
+        run: pnpm audit:secrets
+
       - name: Setup Pages
         uses: actions/configure-pages@v6
 

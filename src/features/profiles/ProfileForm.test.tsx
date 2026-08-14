@@ -26,7 +26,12 @@ describe("ProfileForm", () => {
 
     await user.click(screen.getByRole("button", { name: "Profil erstellen" }));
 
+    const displayNameField = screen.getByRole("textbox", { name: "Anzeigename" });
     expect(await screen.findByText("Der Anzeigename braucht mindestens 2 Zeichen.")).toBeVisible();
+    expect(displayNameField).toHaveAttribute("aria-invalid", "true");
+    expect(displayNameField).toHaveAccessibleDescription(
+      "Der Anzeigename braucht mindestens 2 Zeichen."
+    );
     expect(onSubmit).not.toHaveBeenCalled();
   });
 });

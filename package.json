@@ -15,7 +15,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "audit:secrets": "node scripts/audit-build-secrets.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
