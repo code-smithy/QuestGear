@@ -53,7 +53,10 @@ describe("App", () => {
     render(<App />);
 
     expect(await screen.findByRole("heading", { name: "QuestGear" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Mit Discord fortfahren" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Mit Discord fortfahren" })).toBeDisabled();
+    expect(
+      screen.getByText(/Supabase ist fuer diese Bereitstellung noch nicht konfiguriert/)
+    ).toBeInTheDocument();
   });
 
   it("renders the protected app shell after restoring a profiled session", async () => {

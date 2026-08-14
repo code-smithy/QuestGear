@@ -28,6 +28,8 @@ const de = {
   "login.description":
     "Katalogisiere Tabletop-Ausruestung, frage Ausleihen bei vertrauenswuerdigen Spielern an und behalte Uebergaben, Rueckgaben und Zuverlaessigkeit an einem Ort.",
   "login.discord": "Mit Discord fortfahren",
+  "login.configMissing":
+    "Supabase ist fuer diese Bereitstellung noch nicht konfiguriert. Setze VITE_SUPABASE_URL und VITE_SUPABASE_PUBLISHABLE_KEY in GitHub Actions.",
   "home.eyebrow": "Uebersicht",
   "home.title": "Startseite",
   "home.intro":
@@ -115,6 +117,8 @@ const en: Record<keyof typeof de, string> = {
   "login.description":
     "Catalogue tabletop gear, request loans from trusted players, and keep handovers, returns, and reliability in one place.",
   "login.discord": "Continue with Discord",
+  "login.configMissing":
+    "Supabase is not configured for this deployment yet. Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in GitHub Actions.",
   "home.eyebrow": "Dashboard",
   "home.title": "Home",
   "home.intro":

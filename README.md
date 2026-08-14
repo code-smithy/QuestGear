@@ -26,6 +26,8 @@ Fill in the public Supabase values when a project is available:
 ```text
 VITE_SUPABASE_URL=
 VITE_SUPABASE_PUBLISHABLE_KEY=
+# Or, for older Supabase naming:
+# VITE_SUPABASE_ANON_KEY=
 VITE_SITE_URL=http://localhost:5173/
 VITE_BASE_PATH=/
 ```
