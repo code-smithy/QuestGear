@@ -20,5 +20,15 @@ export const loanEventLabelKeys: Record<LoanEventType, TranslationKey> = {
   countered: "loan.event.countered",
   cancelled: "loan.event.cancelled",
   lender_handover_confirmed: "loan.event.lenderHandoverConfirmed",
-  borrower_receipt_confirmed: "loan.event.borrowerReceiptConfirmed"
+  borrower_receipt_confirmed: "loan.event.borrowerReceiptConfirmed",
+  handover_completed: "loan.event.handoverCompleted",
+  extension_requested: "loan.event.extensionRequested",
+  extension_approved: "loan.event.extensionApproved",
+  extension_rejected: "loan.event.extensionRejected",
+  return_submitted: "loan.event.returnSubmitted",
+  return_accepted: "loan.event.returnAccepted",
+  return_disputed: "loan.event.returnDisputed",
+  due_reminder: "loan.event.dueReminder",
+  due_reached: "loan.event.dueReached",
+  overdue: "loan.event.overdue"
 };

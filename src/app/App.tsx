@@ -9,6 +9,7 @@ import { ItemDetailPage } from "@/features/items/ItemDetailPage";
 import { ItemEditorPage } from "@/features/items/ItemEditorPage";
 import { LoanDetailPage } from "@/features/loans/LoanDetailPage";
 import { LoginPage } from "@/features/auth/LoginPage";
+import { NotificationsPage } from "@/features/notifications/NotificationsPage";
 import { OnboardingPage } from "@/features/profiles/OnboardingPage";
 import { PlaceholderPage } from "@/features/shared/PlaceholderPage";
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
@@ -51,7 +52,7 @@ export function App() {
                   <Route path="/requests" element={<RequestsPage />} />
                   <Route path="/loans" element={<RequestsPage />} />
                   <Route path="/loans/:loanId" element={<LoanDetailPage />} />
-                  <Route path="/notifications" element={<PlaceholderPage titleKey="routes.notifications" />} />
+                  <Route path="/notifications" element={<NotificationsPage />} />
                   <Route path="/users/:userId" element={<PublicProfilePage />} />
                   <Route path="/settings" element={<SettingsPage />} />
                   <Route path="/help/reliability" element={<PlaceholderPage titleKey="routes.reliability" />} />

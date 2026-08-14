@@ -1,5 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/features/auth/useAuth";
+import { getUnreadNotificationCount } from "@/features/notifications/notificationApi";
 import { LanguageSwitcher } from "@/features/settings/LanguageSwitcher";
 import { useI18n } from "@/lib/i18n/useI18n";
 import type { TranslationKey } from "@/lib/i18n/translations";
@@ -15,7 +17,42 @@ const navItems: Array<{ to: string; labelKey: TranslationKey }> = [
 
 export function AppLayout() {
   const { t } = useI18n();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadUnreadCount() {
+      if (!user) {
+        return;
+      }
+
+      try {
+        const count = await getUnreadNotificationCount();
+
+        if (isMounted) {
+          setUnreadNotificationCount(count);
+        }
+      } catch {
+        if (isMounted) {
+          setUnreadNotificationCount(0);
+        }
+      }
+    }
+
+    function handleNotificationsUpdated() {
+      void loadUnreadCount();
+    }
+
+    void loadUnreadCount();
+    window.addEventListener("questgear:notifications-updated", handleNotificationsUpdated);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener("questgear:notifications-updated", handleNotificationsUpdated);
+    };
+  }, [user]);
 
   return (
     <div className="app-shell">
@@ -30,6 +67,9 @@ export function AppLayout() {
           {navItems.map((item) => (
             <NavLink key={item.to} to={item.to}>
               {t(item.labelKey)}
+              {item.to === "/notifications" && unreadNotificationCount > 0 ? (
+                <span className="nav-count">{unreadNotificationCount}</span>
+              ) : null}
             </NavLink>
           ))}
         </nav>

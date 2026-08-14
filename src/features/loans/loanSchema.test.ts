@@ -1,6 +1,8 @@
 import {
   formatLoanDateTime,
   getDefaultLoanRequestFormValues,
+  getReminderDueAt,
+  isLoanOverdue,
   loanRequestFormSchema
 } from "@/features/loans/loanSchema";
 
@@ -33,5 +35,37 @@ describe("loan date helpers", () => {
 
   it("formats ISO timestamps for display", () => {
     expect(formatLoanDateTime("2026-08-15T18:00:00.000Z", "en")).toContain("2026");
+  });
+
+  it("calculates advance reminders after activation", () => {
+    expect(
+      getReminderDueAt("2026-08-20T18:00:00.000Z", 2, "2026-08-17T18:00:00.000Z")
+    ).toBe("2026-08-18T18:00:00.000Z");
+    expect(
+      getReminderDueAt("2026-08-20T18:00:00.000Z", 5, "2026-08-17T18:00:00.000Z")
+    ).toBe("2026-08-17T18:00:00.000Z");
+  });
+
+  it("derives overdue state only until return submission", () => {
+    expect(
+      isLoanOverdue(
+        {
+          dueAt: "2026-08-20T18:00:00.000Z",
+          status: "active",
+          returnSubmittedAt: null
+        },
+        new Date("2026-08-21T18:00:00.000Z")
+      )
+    ).toBe(true);
+    expect(
+      isLoanOverdue(
+        {
+          dueAt: "2026-08-20T18:00:00.000Z",
+          status: "return_pending",
+          returnSubmittedAt: "2026-08-21T12:00:00.000Z"
+        },
+        new Date("2026-08-22T18:00:00.000Z")
+      )
+    ).toBe(false);
   });
 });
