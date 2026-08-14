@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { getItemCoverImageUrl, getItemTextDescription } from "@/features/items/itemImages";
 import { categoryLabelKeys, conditionLabelKeys, stateLabelKeys } from "@/features/items/itemLabels";
 import type { ItemSummary } from "@/features/items/itemSchema";
 import { useI18n } from "@/lib/i18n/useI18n";
@@ -12,11 +13,13 @@ type ItemCardProps = {
 export function ItemCard({ item, showOwner = false, currentUserId }: ItemCardProps) {
   const { t } = useI18n();
   const isOwnItem = currentUserId === item.ownerId;
+  const coverImageUrl = getItemCoverImageUrl(item);
+  const textDescription = getItemTextDescription(item.description);
 
   return (
     <article className="item-card">
       <div className="item-card-media" aria-hidden="true">
-        {item.coverPhotoUrl ? <img src={item.coverPhotoUrl} alt="" /> : <span>{item.title.slice(0, 2)}</span>}
+        {coverImageUrl ? <img src={coverImageUrl} alt="" /> : <span>{item.title.slice(0, 2)}</span>}
       </div>
       <div className="item-card-body">
         <div className="item-card-title-row">
@@ -28,7 +31,7 @@ export function ItemCard({ item, showOwner = false, currentUserId }: ItemCardPro
             <span className={`status-pill status-${item.state}`}>{t(stateLabelKeys[item.state])}</span>
           </div>
         </div>
-        <p>{item.description}</p>
+        <p>{textDescription || item.description}</p>
         <dl className="compact-facts">
           <div>
             <dt>{t("item.category")}</dt>

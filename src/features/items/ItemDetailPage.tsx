@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAuth } from "@/features/auth/useAuth";
 import { getItemDetail } from "@/features/items/itemApi";
+import { getItemCoverImageUrl, splitDescriptionByImageUrls } from "@/features/items/itemImages";
 import { categoryLabelKeys, conditionLabelKeys, severityLabelKeys, stateLabelKeys } from "@/features/items/itemLabels";
 import type { ItemDetail } from "@/features/items/itemSchema";
 import { LoanRequestPanel } from "@/features/loans/LoanRequestPanel";
@@ -64,17 +65,19 @@ export function ItemDetailPage() {
   }
 
   const isOwner = item.ownerId === user?.id;
+  const coverImageUrl = getItemCoverImageUrl(item);
+  const descriptionParts = splitDescriptionByImageUrls(item.description);
 
   return (
     <section className="page-section" aria-labelledby="item-title">
       <div className="item-detail-hero">
         <div className="item-detail-media" aria-hidden="true">
-          {item.coverPhotoUrl ? <img src={item.coverPhotoUrl} alt="" /> : <span>{item.title.slice(0, 2)}</span>}
+          {coverImageUrl ? <img src={coverImageUrl} alt="" /> : <span>{item.title.slice(0, 2)}</span>}
         </div>
         <div>
           <p className="eyebrow">{t(categoryLabelKeys[item.category])}</p>
           <h1 id="item-title">{item.title}</h1>
-          <p className="page-intro">{item.description}</p>
+          <ItemDescription title={item.title} parts={descriptionParts} />
           <div className="action-row">
             {isOwner ? (
               <Link className="secondary-button button-link" to={`/items/${item.id}/edit`}>
@@ -140,5 +143,19 @@ export function ItemDetailPage() {
         )}
       </section>
     </section>
+  );
+}
+
+function ItemDescription({ title, parts }: { title: string; parts: ReturnType<typeof splitDescriptionByImageUrls> }) {
+  return (
+    <div className="page-intro item-description">
+      {parts.map((part, index) =>
+        part.type === "image" ? (
+          <img key={`${part.value}-${index}`} src={part.value} alt={`${title} ${index + 1}`} loading="lazy" />
+        ) : (
+          <p key={`${part.value}-${index}`}>{part.value.trim()}</p>
+        )
+      )}
+    </div>
   );
 }

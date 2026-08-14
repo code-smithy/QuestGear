@@ -85,4 +85,41 @@ describe("ItemCard", () => {
 
     expect(screen.getByText("Dein Gegenstand")).toBeInTheDocument();
   });
+
+  it("uses the first image link from the description as the cover image", () => {
+    const item: ItemSummary = {
+      id: "item-1",
+      ownerId: "user-1",
+      title: "Painted Skirmish Set",
+      description: "Photos: https://example.com/front.jpg and https://example.com/back.png",
+      category: "miniatures",
+      condition: "very_good",
+      publicRegion: "Zurich",
+      state: "published",
+      gameSystem: "Frostgrave",
+      manufacturer: "North Star",
+      language: null,
+      tags: ["skirmish"],
+      fragile: false,
+      minimumNoticeDays: 1,
+      maximumLoanDays: 10,
+      replacementValue: null,
+      replacementValueCurrency: null,
+      coverPhotoUrl: null,
+      ownerDisplayName: "Mara",
+      createdAt: "2026-08-14T00:00:00Z",
+      updatedAt: "2026-08-14T00:00:00Z"
+    };
+
+    const { container } = render(
+      <I18nProvider>
+        <MemoryRouter>
+          <ItemCard item={item} />
+        </MemoryRouter>
+      </I18nProvider>
+    );
+
+    expect(container.querySelector(".item-card-media img")).toHaveAttribute("src", "https://example.com/front.jpg");
+    expect(screen.getByText("Photos: and")).toBeInTheDocument();
+  });
 });
