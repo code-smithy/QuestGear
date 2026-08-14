@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, type UseFormRegisterReturn } from "react-hook-form";
 import { Link, useParams } from "react-router-dom";
 import { useAuth } from "@/features/auth/useAuth";
 import {
@@ -28,6 +28,12 @@ import {
   type LoanDetail,
   type ReturnSubmissionFormValues
 } from "@/features/loans/loanSchema";
+import { submitReview } from "@/features/reviews/reviewApi";
+import {
+  getDefaultReviewFormValues,
+  reviewFormSchema,
+  type ReviewFormValues
+} from "@/features/reviews/reviewSchema";
 import type { TranslationKey } from "@/lib/i18n/translations";
 import { useI18n } from "@/lib/i18n/useI18n";
 
@@ -49,6 +55,10 @@ export function LoanDetailPage() {
   const disputeForm = useForm<DisputeReturnFormValues>({
     resolver: zodResolver(disputeReturnFormSchema),
     defaultValues: { conditionNote: "", damageNote: "", missingContentNote: "" }
+  });
+  const reviewForm = useForm<ReviewFormValues>({
+    resolver: zodResolver(reviewFormSchema),
+    defaultValues: getDefaultReviewFormValues()
   });
 
   const loadLoan = useCallback(async () => {
@@ -134,6 +144,17 @@ export function LoanDetailPage() {
     });
   }
 
+  async function submitLoanReview(values: ReviewFormValues) {
+    if (!loan) {
+      return;
+    }
+
+    await runAction(async () => {
+      await submitReview(loan.id, values);
+      reviewForm.reset(getDefaultReviewFormValues());
+    });
+  }
+
   if (status === "loading") {
     return <p role="status">{t("loan.loading")}</p>;
   }
@@ -160,6 +181,12 @@ export function LoanDetailPage() {
   const canSubmitReturn = isBorrower && loan.status === "active";
   const canRespondToExtension = isOwner && loan.status === "active" && Boolean(pendingExtension);
   const canResolveReturn = isOwner && loan.status === "return_pending";
+  const userReview = loan.reviews.find((review) => review.reviewerId === user.id);
+  const reviewPeriodOpen = isReviewPeriodOpen(loan.completedAt);
+  const canSubmitReview = loan.status === "completed" && reviewPeriodOpen && !userReview && (isOwner || isBorrower);
+  const reviewLabels: [TranslationKey, TranslationKey, TranslationKey] = isOwner
+    ? ["review.borrowerCare", "review.punctuality", "review.communication"]
+    : ["review.lenderAccuracy", "review.punctuality", "review.communication"];
 
   return (
     <section className="page-section" aria-labelledby="loan-title">
@@ -351,6 +378,31 @@ export function LoanDetailPage() {
         </section>
       ) : null}
 
+      {canSubmitReview ? (
+        <section className="loan-request-panel" aria-labelledby="review-submit-title">
+          <h2 id="review-submit-title">{t("review.submitTitle")}</h2>
+          <form className="compact-form" onSubmit={(event) => void reviewForm.handleSubmit(submitLoanReview)(event)}>
+            <RatingField labelKey={reviewLabels[0]} registration={reviewForm.register("ratingOne")} />
+            <RatingField labelKey={reviewLabels[1]} registration={reviewForm.register("ratingTwo")} />
+            <RatingField labelKey={reviewLabels[2]} registration={reviewForm.register("ratingThree")} />
+            <label className="full-width">
+              <span>{t("review.comment")}</span>
+              <textarea rows={3} {...reviewForm.register("comment")} />
+              <FieldError message={reviewForm.formState.errors.comment?.message} />
+            </label>
+            <div className="form-actions">
+              <button type="submit" className="primary-button" disabled={reviewForm.formState.isSubmitting}>
+                {t("review.submit")}
+              </button>
+            </div>
+          </form>
+        </section>
+      ) : null}
+
+      {loan.status === "completed" && userReview ? (
+        <p className="success">{t(userReview.visibleAt ? "review.visible" : "review.hiddenUntilReveal")}</p>
+      ) : null}
+
       <section aria-labelledby="loan-items-title">
         <h2 id="loan-items-title">{t("loan.items")}</h2>
         <ul className="data-list">
@@ -376,6 +428,25 @@ export function LoanDetailPage() {
         </ol>
       </section>
 
+      {loan.reviews.length > 0 ? (
+        <section aria-labelledby="loan-reviews-title">
+          <h2 id="loan-reviews-title">{t("review.title")}</h2>
+          <ul className="data-list">
+            {loan.reviews.map((review) => (
+              <li key={review.id}>
+                <strong>{review.reviewerId === loan.ownerId ? t("loan.owner") : t("loan.borrower")}</strong>
+                <span>{formatReviewAverage(review.ratingOne, review.ratingTwo, review.ratingThree)} / 5</span>
+                {review.visibleAt ? (
+                  review.comment ? <p>{review.comment}</p> : <p>{t("review.noComment")}</p>
+                ) : (
+                  <p>{t("review.hiddenUntilReveal")}</p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       {loan.conditionReports.length > 0 ? (
         <section aria-labelledby="loan-reports-title">
           <h2 id="loan-reports-title">{t("loan.conditionReports")}</h2>
@@ -393,6 +464,43 @@ export function LoanDetailPage() {
         </section>
       ) : null}
     </section>
+  );
+}
+
+function isReviewPeriodOpen(completedAt: string | null): boolean {
+  if (!completedAt) {
+    return false;
+  }
+
+  const reviewPeriodEndsAt = new Date(completedAt);
+  reviewPeriodEndsAt.setDate(reviewPeriodEndsAt.getDate() + 14);
+  return reviewPeriodEndsAt.getTime() >= Date.now();
+}
+
+function formatReviewAverage(...ratings: number[]): string {
+  return (ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length).toFixed(1);
+}
+
+function RatingField({
+  labelKey,
+  registration
+}: {
+  labelKey: TranslationKey;
+  registration: UseFormRegisterReturn;
+}) {
+  const { t } = useI18n();
+
+  return (
+    <label>
+      <span>{t(labelKey)}</span>
+      <select {...registration}>
+        {[5, 4, 3, 2, 1].map((rating) => (
+          <option key={rating} value={rating}>
+            {rating}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
 

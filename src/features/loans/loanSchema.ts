@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { LoanReview } from "@/features/reviews/reviewSchema";
 
 export const loanStatuses = [
   "requested",
@@ -61,6 +62,7 @@ export type LoanSummary = {
   borrowerReceiptConfirmedAt: string | null;
   activatedAt: string | null;
   returnSubmittedAt: string | null;
+  completedAt: string | null;
   createdAt: string;
   updatedAt: string;
   ownerDisplayName: string | null;
@@ -107,6 +109,7 @@ export type LoanDetail = LoanSummary & {
   events: LoanEvent[];
   extensionRequests: LoanExtensionRequest[];
   conditionReports: LoanConditionReport[];
+  reviews: LoanReview[];
 };
 
 export const extensionRequestFormSchema = z.object({

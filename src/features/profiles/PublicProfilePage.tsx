@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getPublicProfile } from "@/features/profiles/profileApi";
 import type { PublicProfile } from "@/features/profiles/profileSchema";
+import { ReliabilitySummary } from "@/features/reliability/ReliabilitySummary";
+import { getReliabilityScore } from "@/features/reliability/reliabilityApi";
+import type { ReliabilityScore } from "@/features/reliability/reliabilitySchema";
 import { useI18n } from "@/lib/i18n/useI18n";
 
 export function PublicProfilePage() {
   const { t } = useI18n();
   const { userId } = useParams();
   const [profile, setProfile] = useState<PublicProfile | null>(null);
+  const [reliabilityScore, setReliabilityScore] = useState<ReliabilityScore | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "missing" | "error">("loading");
 
   useEffect(() => {
@@ -20,13 +24,17 @@ export function PublicProfilePage() {
       }
 
       try {
-        const loadedProfile = await getPublicProfile(userId);
+        const [loadedProfile, loadedReliabilityScore] = await Promise.all([
+          getPublicProfile(userId),
+          getReliabilityScore(userId)
+        ]);
 
         if (!isMounted) {
           return;
         }
 
         setProfile(loadedProfile);
+        setReliabilityScore(loadedReliabilityScore);
         setStatus(loadedProfile ? "ready" : "missing");
       } catch {
         if (isMounted) {
@@ -71,6 +79,7 @@ export function PublicProfilePage() {
           <dd>{new Date(profile.createdAt).toLocaleDateString()}</dd>
         </div>
       </dl>
+      <ReliabilitySummary score={reliabilityScore} />
     </section>
   );
 }

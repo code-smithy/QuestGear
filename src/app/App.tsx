@@ -14,6 +14,7 @@ import { OnboardingPage } from "@/features/profiles/OnboardingPage";
 import { PlaceholderPage } from "@/features/shared/PlaceholderPage";
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
 import { PublicProfilePage } from "@/features/profiles/PublicProfilePage";
+import { ReliabilityHelpPage } from "@/features/reliability/ReliabilityHelpPage";
 import { RequestsPage } from "@/features/loans/RequestsPage";
 import { SettingsPage } from "@/features/profiles/SettingsPage";
 import { I18nProvider } from "@/lib/i18n/I18nProvider";
@@ -55,7 +56,7 @@ export function App() {
                   <Route path="/notifications" element={<NotificationsPage />} />
                   <Route path="/users/:userId" element={<PublicProfilePage />} />
                   <Route path="/settings" element={<SettingsPage />} />
-                  <Route path="/help/reliability" element={<PlaceholderPage titleKey="routes.reliability" />} />
+                  <Route path="/help/reliability" element={<ReliabilityHelpPage />} />
                   <Route path="*" element={<PlaceholderPage titleKey="routes.notFound" />} />
                 </Route>
               </Route>

@@ -8,6 +8,7 @@ import type {
   LoanStatus,
   LoanSummary
 } from "@/features/loans/loanSchema";
+import type { LoanReview, ReviewerRole } from "@/features/reviews/reviewSchema";
 
 type LoanRow = {
   id: string;
@@ -21,6 +22,7 @@ type LoanRow = {
   borrower_receipt_confirmed_at: string | null;
   activated_at: string | null;
   return_submitted_at: string | null;
+  completed_at: string | null;
   created_at: string;
   updated_at: string;
   owner_profile?: { display_name: string } | null;
@@ -29,6 +31,7 @@ type LoanRow = {
   loan_events?: LoanEventRow[];
   loan_extension_requests?: LoanExtensionRequestRow[];
   loan_condition_reports?: LoanConditionReportRow[];
+  reviews?: ReviewRow[];
 };
 
 type LoanItemRow = {
@@ -67,6 +70,20 @@ type LoanConditionReportRow = {
   created_at: string;
 };
 
+type ReviewRow = {
+  id: string;
+  loan_id: string;
+  reviewer_id: string;
+  reviewee_id: string;
+  reviewer_role: ReviewerRole;
+  rating_one: number;
+  rating_two: number;
+  rating_three: number;
+  comment: string | null;
+  submitted_at: string;
+  visible_at: string | null;
+};
+
 const loanSelect = [
   "id",
   "owner_id",
@@ -79,6 +96,7 @@ const loanSelect = [
   "borrower_receipt_confirmed_at",
   "activated_at",
   "return_submitted_at",
+  "completed_at",
   "created_at",
   "updated_at",
   "owner_profile:profiles!loans_owner_id_fkey(display_name)",
@@ -90,7 +108,8 @@ const loanDetailSelect = [
   loanSelect,
   "loan_events(id,event_type,actor_id,event_data,created_at)",
   "loan_extension_requests(id,requested_by,requested_due_at,reason,status,created_at,responded_at)",
-  "loan_condition_reports(id,report_type,created_by,condition_note,damage_note,missing_content_note,claimed_event_at,created_at)"
+  "loan_condition_reports(id,report_type,created_by,condition_note,damage_note,missing_content_note,claimed_event_at,created_at)",
+  "reviews(id,loan_id,reviewer_id,reviewee_id,reviewer_role,rating_one,rating_two,rating_three,comment,submitted_at,visible_at)"
 ].join(",");
 
 export async function createLoanRequest(input: {
@@ -275,6 +294,7 @@ function mapLoanSummary(row: LoanRow): LoanSummary {
     borrowerReceiptConfirmedAt: row.borrower_receipt_confirmed_at,
     activatedAt: row.activated_at,
     returnSubmittedAt: row.return_submitted_at,
+    completedAt: row.completed_at,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     ownerDisplayName: row.owner_profile?.display_name ?? null,
@@ -307,7 +327,26 @@ function mapLoanDetail(row: LoanRow): LoanDetail {
       .sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime()),
     conditionReports: (row.loan_condition_reports ?? [])
       .map(mapLoanConditionReport)
-      .sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime())
+      .sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime()),
+    reviews: (row.reviews ?? [])
+      .map(mapReview)
+      .sort((left, right) => new Date(right.submittedAt).getTime() - new Date(left.submittedAt).getTime())
+  };
+}
+
+function mapReview(row: ReviewRow): LoanReview {
+  return {
+    id: row.id,
+    loanId: row.loan_id,
+    reviewerId: row.reviewer_id,
+    revieweeId: row.reviewee_id,
+    reviewerRole: row.reviewer_role,
+    ratingOne: row.rating_one,
+    ratingTwo: row.rating_two,
+    ratingThree: row.rating_three,
+    comment: row.comment,
+    submittedAt: row.submitted_at,
+    visibleAt: row.visible_at
   };
 }
 

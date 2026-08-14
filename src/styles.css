@@ -608,11 +608,29 @@ h2 {
 }
 
 .loan-request-panel,
-.request-card {
+.request-card,
+.reliability-panel {
   border: 1px solid #ddd6c8;
   border-radius: 8px;
   padding: 1rem;
   background: #fffdfa;
+}
+
+.score-display {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.score-display strong {
+  color: #215243;
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.score-display span {
+  color: #4c564f;
+  font-weight: 900;
 }
 
 .compact-form {
@@ -639,6 +657,7 @@ h2 {
 }
 
 .compact-form input,
+.compact-form select,
 .compact-form textarea {
   width: 100%;
   border: 1px solid #cfc6b5;
