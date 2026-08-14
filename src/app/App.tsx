@@ -5,6 +5,8 @@ import { AuthProvider } from "@/features/auth/AuthProvider";
 import { BrowsePage } from "@/features/browse/BrowsePage";
 import { HomePage } from "@/features/home/HomePage";
 import { InventoryPage } from "@/features/inventory/InventoryPage";
+import { ItemDetailPage } from "@/features/items/ItemDetailPage";
+import { ItemEditorPage } from "@/features/items/ItemEditorPage";
 import { LoginPage } from "@/features/auth/LoginPage";
 import { OnboardingPage } from "@/features/profiles/OnboardingPage";
 import { PlaceholderPage } from "@/features/shared/PlaceholderPage";
@@ -41,9 +43,9 @@ export function App() {
                   <Route path="/home" element={<HomePage />} />
                   <Route path="/browse" element={<BrowsePage />} />
                   <Route path="/inventory" element={<InventoryPage />} />
-                  <Route path="/items/new" element={<PlaceholderPage titleKey="routes.newItem" />} />
-                  <Route path="/items/:itemId" element={<PlaceholderPage titleKey="routes.itemDetail" />} />
-                  <Route path="/items/:itemId/edit" element={<PlaceholderPage titleKey="routes.editItem" />} />
+                  <Route path="/items/new" element={<ItemEditorPage />} />
+                  <Route path="/items/:itemId" element={<ItemDetailPage />} />
+                  <Route path="/items/:itemId/edit" element={<ItemEditorPage />} />
                   <Route path="/requests" element={<PlaceholderPage titleKey="routes.requests" />} />
                   <Route path="/loans" element={<PlaceholderPage titleKey="routes.loans" />} />
                   <Route path="/loans/:loanId" element={<PlaceholderPage titleKey="routes.loanDetail" />} />

@@ -32,6 +32,9 @@ VITE_SITE_URL=http://localhost:5173/
 VITE_BASE_PATH=/
 ```
 
+`VITE_SUPABASE_URL` must be the project root, for example
+`https://project-ref.supabase.co`, not the REST endpoint ending in `/rest/v1`.
+
 Install dependencies and start the app:
 
 ```bash

@@ -55,7 +55,7 @@ describe("App", () => {
     expect(await screen.findByRole("heading", { name: "QuestGear" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Mit Discord fortfahren" })).toBeDisabled();
     expect(
-      screen.getByText(/Supabase ist fuer diese Bereitstellung noch nicht konfiguriert/)
+      screen.getByText(/Supabase ist für diese Bereitstellung noch nicht konfiguriert/)
     ).toBeInTheDocument();
   });
 
