@@ -8,7 +8,6 @@ const navItems: Array<{ to: string; labelKey: TranslationKey }> = [
   { to: "/home", labelKey: "nav.home" },
   { to: "/browse", labelKey: "nav.browse" },
   { to: "/inventory", labelKey: "nav.inventory" },
-  { to: "/requests", labelKey: "nav.requests" },
   { to: "/loans", labelKey: "nav.loans" },
   { to: "/notifications", labelKey: "nav.notifications" },
   { to: "/settings", labelKey: "nav.settings" }
