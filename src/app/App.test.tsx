@@ -63,6 +63,7 @@ describe("App", () => {
 
     expect(await screen.findByRole("heading", { name: "QuestGear" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Mit Discord fortfahren" })).toBeDisabled();
+    expect(screen.getByRole("combobox", { name: "Sprache" })).toBeInTheDocument();
     expect(
       screen.getByText(/Supabase ist für diese Bereitstellung noch nicht konfiguriert/)
     ).toBeInTheDocument();
@@ -98,6 +99,7 @@ describe("App", () => {
     expect(await screen.findByRole("heading", { name: "Startseite" })).toBeInTheDocument();
     expect(screen.getByRole("navigation", { name: "Hauptnavigation" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Einstellungen" })).toBeInTheDocument();
+    expect(screen.queryByRole("combobox", { name: "Sprache" })).not.toBeInTheDocument();
   });
 
   it("renders public profiles without a restored session", async () => {
@@ -126,6 +128,50 @@ describe("App", () => {
 
     expect(await screen.findByRole("heading", { name: "Lena" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Anmelden" })).toHaveAttribute("href", "#/login");
+    expect(screen.getByRole("combobox", { name: "Sprache" })).toBeInTheDocument();
     expect(screen.getAllByText("Basel").length).toBeGreaterThan(0);
+  });
+
+  it("hides the public language switcher when a session is restored", async () => {
+    window.location.hash = "#/users/user-2";
+    supabaseState.session = {
+      access_token: "token",
+      refresh_token: "refresh",
+      expires_in: 3600,
+      token_type: "bearer",
+      user: { id: "user-1", user_metadata: {} }
+    };
+    supabaseState.profileRow = {
+      id: "user-1",
+      display_name: "Mara",
+      avatar_url: null,
+      bio: null,
+      country_code: "CH",
+      public_region: "Zurich",
+      time_zone: "Europe/Zurich",
+      reminder_lead_days: 2,
+      browser_push_enabled: false,
+      account_status: "active",
+      preferred_locale: "de",
+      preferred_currency: "EUR",
+      created_at: "2026-08-14T00:00:00Z",
+      updated_at: "2026-08-14T00:00:00Z"
+    };
+    supabaseState.publicProfileRow = {
+      id: "user-2",
+      display_name: "Lena",
+      avatar_url: null,
+      bio: "Miniatures painter",
+      public_region: "Basel",
+      account_status: "active",
+      created_at: "2026-08-14T00:00:00Z",
+      locations: []
+    };
+
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: "Lena" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Abmelden" })).toBeInTheDocument();
+    expect(screen.queryByRole("combobox", { name: "Sprache" })).not.toBeInTheDocument();
   });
 });

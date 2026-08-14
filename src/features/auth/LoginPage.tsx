@@ -1,5 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/features/auth/useAuth";
+import { LanguageSwitcher } from "@/features/settings/LanguageSwitcher";
 import { getPublicEnv, hasSupabaseConfig } from "@/lib/env";
 import { useI18n } from "@/lib/i18n/useI18n";
 import { supabase } from "@/lib/supabase";
@@ -42,6 +43,7 @@ export function LoginPage() {
         >
           {t("login.discord")}
         </button>
+        {!isLoading && !user ? <LanguageSwitcher /> : null}
       </section>
     </main>
   );

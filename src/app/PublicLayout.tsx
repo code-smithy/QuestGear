@@ -17,7 +17,7 @@ export function PublicLayout() {
           <span>QuestGear</span>
         </Link>
         <div className="header-actions public-header-actions">
-          <LanguageSwitcher />
+          {!isLoading && !user ? <LanguageSwitcher /> : null}
           {isLoading ? null : user ? (
             <button type="button" className="secondary-button" onClick={() => void signOut()}>
               {t("auth.logout")}

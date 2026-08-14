@@ -2,7 +2,6 @@ import { NavLink, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/features/auth/useAuth";
 import { getUnreadNotificationCount } from "@/features/notifications/notificationApi";
-import { LanguageSwitcher } from "@/features/settings/LanguageSwitcher";
 import { useI18n } from "@/lib/i18n/useI18n";
 import type { TranslationKey } from "@/lib/i18n/translations";
 
@@ -74,7 +73,6 @@ export function AppLayout() {
           ))}
         </nav>
         <div className="header-actions">
-          <LanguageSwitcher />
           <button type="button" className="secondary-button" onClick={() => void signOut()}>
             {t("auth.logout")}
           </button>
