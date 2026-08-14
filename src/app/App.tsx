@@ -49,7 +49,7 @@ export function App() {
                   <Route path="/items/:itemId" element={<ItemDetailPage />} />
                   <Route path="/items/:itemId/edit" element={<ItemEditorPage />} />
                   <Route path="/requests" element={<RequestsPage />} />
-                  <Route path="/loans" element={<PlaceholderPage titleKey="routes.loans" />} />
+                  <Route path="/loans" element={<RequestsPage />} />
                   <Route path="/loans/:loanId" element={<LoanDetailPage />} />
                   <Route path="/notifications" element={<PlaceholderPage titleKey="routes.notifications" />} />
                   <Route path="/users/:userId" element={<PublicProfilePage />} />
