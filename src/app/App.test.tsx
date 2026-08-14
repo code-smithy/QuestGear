@@ -79,6 +79,7 @@ describe("App", () => {
       browser_push_enabled: false,
       account_status: "active",
       preferred_locale: "de",
+      preferred_currency: "EUR",
       created_at: "2026-08-14T00:00:00Z",
       updated_at: "2026-08-14T00:00:00Z"
     };

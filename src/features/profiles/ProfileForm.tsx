@@ -4,6 +4,7 @@ import {
   profileFormSchema,
   type ProfileFormValues
 } from "@/features/profiles/profileSchema";
+import { currencyLabels, supportedCurrencies } from "@/lib/currency";
 import { localeLabels, locales } from "@/lib/i18n/translations";
 import { useI18n } from "@/lib/i18n/useI18n";
 
@@ -72,6 +73,18 @@ export function ProfileForm({
           ))}
         </select>
         <FieldError message={errors.preferredLocale?.message} />
+      </label>
+
+      <label>
+        <span>{t("profile.preferredCurrency")}</span>
+        <select {...register("preferredCurrency")}>
+          {supportedCurrencies.map((currency) => (
+            <option key={currency} value={currency}>
+              {currencyLabels[currency]}
+            </option>
+          ))}
+        </select>
+        <FieldError message={errors.preferredCurrency?.message} />
       </label>
 
       <label className="checkbox-field">

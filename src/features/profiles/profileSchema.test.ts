@@ -13,7 +13,8 @@ describe("profileFormSchema", () => {
       timeZone: "Europe/Zurich",
       reminderLeadDays: 2,
       browserPushEnabled: false,
-      preferredLocale: "de"
+      preferredLocale: "de",
+      preferredCurrency: "CHF"
     });
 
     expect(result.success).toBe(true);
@@ -28,7 +29,8 @@ describe("profileFormSchema", () => {
       timeZone: "",
       reminderLeadDays: 31,
       browserPushEnabled: false,
-      preferredLocale: "de"
+      preferredLocale: "de",
+      preferredCurrency: "GBP"
     });
 
     expect(result.success).toBe(false);
@@ -40,6 +42,7 @@ describe("getDefaultProfileFormValues", () => {
     expect(getDefaultProfileFormValues({ displayName: " Mara ", locale: "en" })).toMatchObject({
       displayName: "Mara",
       preferredLocale: "en",
+      preferredCurrency: "EUR",
       reminderLeadDays: 2
     });
   });

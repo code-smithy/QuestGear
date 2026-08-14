@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import type { SupportedCurrency } from "@/lib/currency";
 import type { Locale } from "@/lib/i18n/translations";
 import type { Profile, ProfileFormValues, PublicProfile } from "@/features/profiles/profileSchema";
 
@@ -14,6 +15,7 @@ type ProfileRow = {
   browser_push_enabled: boolean;
   account_status: "active" | "suspended" | "deleted";
   preferred_locale: Locale;
+  preferred_currency: SupportedCurrency;
   created_at: string;
   updated_at: string;
 };
@@ -35,6 +37,7 @@ const ownProfileColumns = [
   "reminder_lead_days",
   "browser_push_enabled",
   "preferred_locale",
+  "preferred_currency",
   "updated_at"
 ].join(",");
 
@@ -77,7 +80,8 @@ export async function saveOwnProfile(userId: string, values: ProfileFormValues):
     time_zone: values.timeZone.trim(),
     reminder_lead_days: values.reminderLeadDays,
     browser_push_enabled: values.browserPushEnabled,
-    preferred_locale: values.preferredLocale
+    preferred_locale: values.preferredLocale,
+    preferred_currency: values.preferredCurrency
   };
 
   const { data, error } = await supabase
@@ -111,6 +115,7 @@ function mapProfile(row: ProfileRow): Profile {
     browserPushEnabled: row.browser_push_enabled,
     accountStatus: row.account_status,
     preferredLocale: row.preferred_locale,
+    preferredCurrency: row.preferred_currency,
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };

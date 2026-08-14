@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { defaultCurrency, supportedCurrencies, type SupportedCurrency } from "@/lib/currency";
 
 export const itemStates = ["draft", "published", "unavailable", "archived"] as const;
 export const itemCategories = [
@@ -55,7 +56,7 @@ export const itemFormSchema = z.object({
     (value) => (value === "" || value === undefined ? "" : Number(value)),
     z.number().min(0).max(100000).or(z.literal(""))
   ),
-  replacementValueCurrency: z.string().trim().length(3).optional().or(z.literal("")),
+  replacementValueCurrency: z.enum(supportedCurrencies),
   contents: z.array(itemContentSchema).min(1, "item.validation.contentsRequired"),
   damage: z.array(itemDamageSchema),
   state: z.enum(itemStates)
@@ -82,7 +83,7 @@ export type ItemSummary = {
   minimumNoticeDays: number;
   maximumLoanDays: number;
   replacementValue: number | null;
-  replacementValueCurrency: string | null;
+  replacementValueCurrency: SupportedCurrency | null;
   coverPhotoUrl: string | null;
   ownerDisplayName?: string;
   createdAt: string;
@@ -94,7 +95,7 @@ export type ItemDetail = ItemSummary & {
   damage: Array<ItemDamageFormValues & { id: string }>;
 };
 
-export function getDefaultItemFormValues(region = ""): ItemFormValues {
+export function getDefaultItemFormValues(region = "", currency = defaultCurrency): ItemFormValues {
   return {
     title: "",
     description: "",
@@ -109,7 +110,7 @@ export function getDefaultItemFormValues(region = ""): ItemFormValues {
     minimumNoticeDays: 1,
     maximumLoanDays: 14,
     replacementValue: "",
-    replacementValueCurrency: "",
+    replacementValueCurrency: currency,
     contents: [{ name: "", quantity: 1, condition: "good", note: "" }],
     damage: [],
     state: "draft"

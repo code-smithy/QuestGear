@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { defaultCurrency, supportedCurrencies, type SupportedCurrency } from "@/lib/currency";
 import { locales } from "@/lib/i18n/translations";
 
 export const profileFormSchema = z.object({
@@ -23,7 +24,8 @@ export const profileFormSchema = z.object({
     .min(0, "profile.validation.reminderLeadDays")
     .max(30, "profile.validation.reminderLeadDays"),
   browserPushEnabled: z.boolean(),
-  preferredLocale: z.enum(locales)
+  preferredLocale: z.enum(locales),
+  preferredCurrency: z.enum(supportedCurrencies)
 });
 
 export type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -40,6 +42,7 @@ export type Profile = {
   browserPushEnabled: boolean;
   accountStatus: "active" | "suspended" | "deleted";
   preferredLocale: ProfileFormValues["preferredLocale"];
+  preferredCurrency: SupportedCurrency;
   createdAt: string;
   updatedAt: string;
 };
@@ -64,7 +67,8 @@ export function toProfileFormValues(profile: Profile): ProfileFormValues {
     timeZone: profile.timeZone,
     reminderLeadDays: profile.reminderLeadDays,
     browserPushEnabled: profile.browserPushEnabled,
-    preferredLocale: profile.preferredLocale
+    preferredLocale: profile.preferredLocale,
+    preferredCurrency: profile.preferredCurrency
   };
 }
 
@@ -80,6 +84,7 @@ export function getDefaultProfileFormValues(options: {
     timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Zurich",
     reminderLeadDays: 2,
     browserPushEnabled: false,
-    preferredLocale: options.locale
+    preferredLocale: options.locale,
+    preferredCurrency: defaultCurrency
   };
 }

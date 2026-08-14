@@ -28,7 +28,7 @@ create table if not exists public.items (
   minimum_notice_days integer not null default 1 check (minimum_notice_days between 0 and 90),
   maximum_loan_days integer not null default 14 check (maximum_loan_days between 1 and 365),
   replacement_value numeric(12, 2) check (replacement_value is null or replacement_value >= 0),
-  replacement_value_currency text check (replacement_value_currency is null or replacement_value_currency ~ '^[A-Z]{3}$'),
+  replacement_value_currency text check (replacement_value_currency is null or replacement_value_currency in ('USD', 'EUR', 'CHF')),
   cover_photo_url text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()

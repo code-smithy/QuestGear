@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import type { SupportedCurrency } from "@/lib/currency";
 import {
   itemTagsFromText,
   type DamageSeverity,
@@ -27,7 +28,7 @@ type ItemRow = {
   minimum_notice_days: number;
   maximum_loan_days: number;
   replacement_value: number | null;
-  replacement_value_currency: string | null;
+  replacement_value_currency: SupportedCurrency | null;
   cover_photo_url: string | null;
   created_at: string;
   updated_at: string;
@@ -120,7 +121,6 @@ export async function getItemDetail(itemId: string): Promise<ItemDetail | null> 
 
 export async function saveItem(ownerId: string, values: ItemFormValues, itemId?: string): Promise<string> {
   const parsedValue = values.replacementValue === "" ? null : Number(values.replacementValue);
-  const currency = normalizeOptional(values.replacementValueCurrency)?.toUpperCase() ?? null;
   const payload = {
     id: itemId,
     owner_id: ownerId,
@@ -138,7 +138,7 @@ export async function saveItem(ownerId: string, values: ItemFormValues, itemId?:
     minimum_notice_days: values.minimumNoticeDays,
     maximum_loan_days: values.maximumLoanDays,
     replacement_value: parsedValue,
-    replacement_value_currency: currency
+    replacement_value_currency: values.replacementValueCurrency
   };
 
   const { data, error } = await supabase.from("items").upsert(payload).select("id").single();

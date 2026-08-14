@@ -14,6 +14,7 @@ import {
   type ItemDetail,
   type ItemFormValues
 } from "@/features/items/itemSchema";
+import { currencyLabels, supportedCurrencies } from "@/lib/currency";
 import {
   categoryLabelKeys,
   conditionLabelKeys,
@@ -34,8 +35,8 @@ export function ItemEditorPage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const defaultValues = useMemo(
-    () => getDefaultItemFormValues(profile?.publicRegion ?? ""),
-    [profile?.publicRegion]
+    () => getDefaultItemFormValues(profile?.publicRegion ?? "", profile?.preferredCurrency),
+    [profile?.preferredCurrency, profile?.publicRegion]
   );
   const {
     control,
@@ -211,7 +212,13 @@ export function ItemEditorPage() {
           </label>
           <label>
             <span>{t("item.replacementValueCurrency")}</span>
-            <input maxLength={3} {...register("replacementValueCurrency")} />
+            <select {...register("replacementValueCurrency")}>
+              {supportedCurrencies.map((currency) => (
+                <option key={currency} value={currency}>
+                  {currencyLabels[currency]}
+                </option>
+              ))}
+            </select>
           </label>
           <label className="checkbox-field">
             <input type="checkbox" {...register("fragile")} />
@@ -333,7 +340,7 @@ function detailToFormValues(item: ItemDetail): ItemFormValues {
     minimumNoticeDays: item.minimumNoticeDays,
     maximumLoanDays: item.maximumLoanDays,
     replacementValue: item.replacementValue ?? "",
-    replacementValueCurrency: item.replacementValueCurrency ?? "",
+    replacementValueCurrency: item.replacementValueCurrency ?? "EUR",
     contents: item.contents.length
       ? item.contents.map((entry) => ({
           name: entry.name,

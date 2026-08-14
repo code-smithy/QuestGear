@@ -20,6 +20,7 @@ create table if not exists public.profiles (
   browser_push_enabled boolean not null default false,
   account_status text not null default 'active' check (account_status in ('active', 'suspended', 'deleted')),
   preferred_locale text not null default 'de' check (preferred_locale in ('de', 'en')),
+  preferred_currency text not null default 'EUR' check (preferred_currency in ('USD', 'EUR', 'CHF')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -123,6 +124,7 @@ grant select (
   reminder_lead_days,
   browser_push_enabled,
   preferred_locale,
+  preferred_currency,
   updated_at
 ) on public.profiles to authenticated;
 
@@ -135,7 +137,8 @@ grant insert (
   time_zone,
   reminder_lead_days,
   browser_push_enabled,
-  preferred_locale
+  preferred_locale,
+  preferred_currency
 ) on public.profiles to authenticated;
 
 grant update (
@@ -146,5 +149,6 @@ grant update (
   time_zone,
   reminder_lead_days,
   browser_push_enabled,
-  preferred_locale
+  preferred_locale,
+  preferred_currency
 ) on public.profiles to authenticated;
