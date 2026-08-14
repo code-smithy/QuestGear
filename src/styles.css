@@ -377,6 +377,13 @@ h2 {
   font-weight: 700;
 }
 
+.field-hint {
+  color: #56635b;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
 .success {
   color: #215243;
   font-weight: 800;

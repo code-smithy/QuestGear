@@ -137,11 +137,13 @@ export function ProfileForm({
             </label>
             <label>
               <span>{t("profile.locationRegionLat")}</span>
+              <span className="field-hint">{t("profile.locationRegionLatHint")}</span>
               <input type="number" step="0.000001" {...register(`locations.${index}.regionCenterLat`)} />
               <FieldError message={errors.locations?.[index]?.regionCenterLat?.message} />
             </label>
             <label>
               <span>{t("profile.locationRegionLng")}</span>
+              <span className="field-hint">{t("profile.locationRegionLngHint")}</span>
               <input type="number" step="0.000001" {...register(`locations.${index}.regionCenterLng`)} />
               <FieldError message={errors.locations?.[index]?.regionCenterLng?.message} />
             </label>
