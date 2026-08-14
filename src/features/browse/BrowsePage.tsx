@@ -29,7 +29,7 @@ export function BrowsePage() {
       }
 
       try {
-        const loadedItems = await listPublishedItems(user.id);
+        const loadedItems = await listPublishedItems();
 
         if (isMounted) {
           setItems(loadedItems);
@@ -95,7 +95,7 @@ export function BrowsePage() {
       {filteredItems.length > 0 ? (
         <div className="item-grid">
           {filteredItems.map((item) => (
-            <ItemCard key={item.id} item={item} showOwner />
+            <ItemCard key={item.id} item={item} showOwner currentUserId={user?.id} />
           ))}
         </div>
       ) : null}

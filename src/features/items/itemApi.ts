@@ -90,12 +90,11 @@ export async function listOwnItems(ownerId: string): Promise<ItemSummary[]> {
   return ((data ?? []) as unknown as ItemRow[]).map(mapItemSummary);
 }
 
-export async function listPublishedItems(userId: string): Promise<ItemSummary[]> {
+export async function listPublishedItems(): Promise<ItemSummary[]> {
   const { data, error } = await supabase
     .from("items")
     .select(`${itemColumns},profiles!items_owner_id_fkey(display_name)`)
     .eq("state", "published")
-    .neq("owner_id", userId)
     .order("updated_at", { ascending: false });
 
   if (error) {

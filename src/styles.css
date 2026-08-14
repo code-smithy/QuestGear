@@ -440,6 +440,14 @@ h2 {
   text-decoration: none;
 }
 
+.item-card-badges {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.35rem;
+}
+
 .item-card p {
   display: -webkit-box;
   overflow: hidden;
@@ -470,6 +478,11 @@ h2 {
 
 .status-archived {
   background: #dadbd6;
+}
+
+.own-item-pill {
+  color: #17211b;
+  background: #f2dfb6;
 }
 
 .compact-facts,

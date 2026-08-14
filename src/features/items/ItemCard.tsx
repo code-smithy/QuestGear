@@ -6,10 +6,12 @@ import { useI18n } from "@/lib/i18n/useI18n";
 type ItemCardProps = {
   item: ItemSummary;
   showOwner?: boolean;
+  currentUserId?: string;
 };
 
-export function ItemCard({ item, showOwner = false }: ItemCardProps) {
+export function ItemCard({ item, showOwner = false, currentUserId }: ItemCardProps) {
   const { t } = useI18n();
+  const isOwnItem = currentUserId === item.ownerId;
 
   return (
     <article className="item-card">
@@ -21,7 +23,10 @@ export function ItemCard({ item, showOwner = false }: ItemCardProps) {
           <h2>
             <Link to={`/items/${item.id}`}>{item.title}</Link>
           </h2>
-          <span className={`status-pill status-${item.state}`}>{t(stateLabelKeys[item.state])}</span>
+          <div className="item-card-badges">
+            {isOwnItem ? <span className="status-pill own-item-pill">{t("item.ownItem")}</span> : null}
+            <span className={`status-pill status-${item.state}`}>{t(stateLabelKeys[item.state])}</span>
+          </div>
         </div>
         <p>{item.description}</p>
         <dl className="compact-facts">
