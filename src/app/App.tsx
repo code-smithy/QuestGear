@@ -13,6 +13,7 @@ import { NotificationsPage } from "@/features/notifications/NotificationsPage";
 import { OnboardingPage } from "@/features/profiles/OnboardingPage";
 import { PlaceholderPage } from "@/features/shared/PlaceholderPage";
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
+import { PublicLayout } from "@/app/PublicLayout";
 import { PublicProfilePage } from "@/features/profiles/PublicProfilePage";
 import { ReliabilityHelpPage } from "@/features/reliability/ReliabilityHelpPage";
 import { RequestsPage } from "@/features/loans/RequestsPage";
@@ -36,6 +37,9 @@ export function App() {
           <HashRouter>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
+              <Route element={<PublicLayout />}>
+                <Route path="/users/:userId" element={<PublicProfilePage />} />
+              </Route>
               <Route element={<ProtectedRoute requireProfile={false} />}>
                 <Route element={<AppLayout />}>
                   <Route path="/onboarding" element={<OnboardingPage />} />
@@ -54,7 +58,6 @@ export function App() {
                   <Route path="/loans" element={<RequestsPage />} />
                   <Route path="/loans/:loanId" element={<LoanDetailPage />} />
                   <Route path="/notifications" element={<NotificationsPage />} />
-                  <Route path="/users/:userId" element={<PublicProfilePage />} />
                   <Route path="/settings" element={<SettingsPage />} />
                   <Route path="/help/reliability" element={<ReliabilityHelpPage />} />
                   <Route path="*" element={<PlaceholderPage titleKey="routes.notFound" />} />

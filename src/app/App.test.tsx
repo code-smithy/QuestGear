@@ -5,12 +5,14 @@ const supabaseState = vi.hoisted(
   (): {
     session: unknown;
     profileRow: unknown;
+    publicProfileRow: unknown;
     signInWithOAuth: ReturnType<typeof vi.fn>;
     signOut: ReturnType<typeof vi.fn>;
     unsubscribe: ReturnType<typeof vi.fn>;
   } => ({
   session: null,
   profileRow: null,
+  publicProfileRow: null,
   signInWithOAuth: vi.fn(),
   signOut: vi.fn(),
   unsubscribe: vi.fn()
@@ -37,7 +39,10 @@ vi.mock("@/lib/supabase", () => ({
       };
 
       return query;
-    })
+    }),
+    rpc: vi.fn(() => ({
+      maybeSingle: vi.fn(() => Promise.resolve({ data: supabaseState.publicProfileRow, error: null }))
+    }))
   }
 }));
 
@@ -47,6 +52,7 @@ describe("App", () => {
     window.location.hash = "";
     supabaseState.session = null;
     supabaseState.profileRow = null;
+    supabaseState.publicProfileRow = null;
     supabaseState.signInWithOAuth.mockClear();
     supabaseState.signOut.mockClear();
     supabaseState.unsubscribe.mockClear();
@@ -92,5 +98,34 @@ describe("App", () => {
     expect(await screen.findByRole("heading", { name: "Startseite" })).toBeInTheDocument();
     expect(screen.getByRole("navigation", { name: "Hauptnavigation" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Einstellungen" })).toBeInTheDocument();
+  });
+
+  it("renders public profiles without a restored session", async () => {
+    window.location.hash = "#/users/user-2";
+    supabaseState.publicProfileRow = {
+      id: "user-2",
+      display_name: "Lena",
+      avatar_url: null,
+      bio: "Miniatures painter",
+      public_region: "Basel",
+      account_status: "active",
+      created_at: "2026-08-14T00:00:00Z",
+      locations: [
+        {
+          id: "location-1",
+          public_region: "Basel",
+          region_center_lat: 47.5596,
+          region_center_lng: 7.5886,
+          is_default: true,
+          sort_order: 0
+        }
+      ]
+    };
+
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: "Lena" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Anmelden" })).toHaveAttribute("href", "#/login");
+    expect(screen.getAllByText("Basel").length).toBeGreaterThan(0);
   });
 });

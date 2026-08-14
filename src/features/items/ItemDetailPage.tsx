@@ -109,7 +109,15 @@ export function ItemDetailPage() {
         </div>
         <div>
           <dt>{t("item.owner")}</dt>
-          <dd>{item.ownerDisplayName ?? t("item.ownerUnknown")}</dd>
+          <dd>
+            {item.ownerDisplayName ? (
+              <Link className="profile-link" to={`/users/${item.ownerId}`}>
+                {item.ownerDisplayName}
+              </Link>
+            ) : (
+              t("item.ownerUnknown")
+            )}
+          </dd>
         </div>
       </dl>
 

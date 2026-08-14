@@ -78,6 +78,11 @@ export type ProfileLocation = {
   updatedAt: string;
 };
 
+export type PublicProfileLocation = Pick<
+  ProfileLocation,
+  "id" | "publicRegion" | "regionCenterLat" | "regionCenterLng" | "isDefault" | "sortOrder"
+>;
+
 export type Profile = {
   id: string;
   displayName: string;
@@ -105,7 +110,9 @@ export type PublicProfile = Pick<
   | "publicRegion"
   | "accountStatus"
   | "createdAt"
->;
+> & {
+  locations: PublicProfileLocation[];
+};
 
 export function toProfileFormValues(profile: Profile): ProfileFormValues {
   return {

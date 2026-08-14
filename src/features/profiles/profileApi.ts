@@ -1,7 +1,13 @@
 import { supabase } from "@/lib/supabase";
 import type { SupportedCurrency } from "@/lib/currency";
 import type { Locale } from "@/lib/i18n/translations";
-import type { Profile, ProfileFormValues, ProfileLocation, PublicProfile } from "@/features/profiles/profileSchema";
+import type {
+  Profile,
+  ProfileFormValues,
+  ProfileLocation,
+  PublicProfile,
+  PublicProfileLocation
+} from "@/features/profiles/profileSchema";
 
 type ProfileRow = {
   id: string;
@@ -32,6 +38,22 @@ type ProfileLocationRow = {
   sort_order: number;
   created_at: string;
   updated_at: string;
+};
+
+type PublicProfileLocationRow = {
+  id: string;
+  public_region: string;
+  region_center_lat: number | string | null;
+  region_center_lng: number | string | null;
+  is_default: boolean;
+  sort_order: number;
+};
+
+type PublicProfileResultRow = Pick<
+  ProfileRow,
+  "id" | "display_name" | "avatar_url" | "bio" | "public_region" | "account_status" | "created_at"
+> & {
+  locations: PublicProfileLocationRow[] | null;
 };
 
 const publicProfileColumns = [
@@ -86,18 +108,13 @@ export async function getOwnProfile(userId: string): Promise<Profile | null> {
 }
 
 export async function getPublicProfile(userId: string): Promise<PublicProfile | null> {
-  const { data, error } = await supabase
-    .from("profiles")
-    .select(publicProfileColumns)
-    .eq("id", userId)
-    .eq("account_status", "active")
-    .maybeSingle();
+  const { data, error } = await supabase.rpc("get_public_profile", { p_user_id: userId }).maybeSingle();
 
   if (error) {
     throw new Error("Could not load public profile.");
   }
 
-  return data ? mapPublicProfile(data as unknown as ProfileRow) : null;
+  return data ? mapPublicProfile(data as unknown as PublicProfileResultRow) : null;
 }
 
 export async function saveOwnProfile(userId: string, values: ProfileFormValues): Promise<Profile> {
@@ -177,7 +194,7 @@ function mapProfile(row: ProfileRow, locations: ProfileLocation[]): Profile {
   };
 }
 
-function mapPublicProfile(row: ProfileRow): PublicProfile {
+function mapPublicProfile(row: PublicProfileResultRow): PublicProfile {
   return {
     id: row.id,
     displayName: row.display_name,
@@ -185,7 +202,8 @@ function mapPublicProfile(row: ProfileRow): PublicProfile {
     bio: row.bio,
     publicRegion: row.public_region,
     accountStatus: row.account_status,
-    createdAt: row.created_at
+    createdAt: row.created_at,
+    locations: (row.locations ?? []).map(mapPublicProfileLocation)
   };
 }
 
@@ -203,4 +221,28 @@ function mapProfileLocation(row: ProfileLocationRow): ProfileLocation {
     createdAt: row.created_at,
     updatedAt: row.updated_at
   };
+}
+
+function mapPublicProfileLocation(row: PublicProfileLocationRow): PublicProfileLocation {
+  return {
+    id: row.id,
+    publicRegion: row.public_region,
+    regionCenterLat: normalizeCoordinate(row.region_center_lat),
+    regionCenterLng: normalizeCoordinate(row.region_center_lng),
+    isDefault: row.is_default,
+    sortOrder: row.sort_order
+  };
+}
+
+function normalizeCoordinate(value: number | string | null): number | "" {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const parsedValue = Number(value);
+    return Number.isFinite(parsedValue) ? parsedValue : "";
+  }
+
+  return "";
 }

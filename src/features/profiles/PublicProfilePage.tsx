@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getPublicProfile } from "@/features/profiles/profileApi";
-import type { PublicProfile } from "@/features/profiles/profileSchema";
+import { ProfileRegionMap } from "@/features/profiles/ProfileRegionMap";
+import type { PublicProfile, PublicProfileLocation } from "@/features/profiles/profileSchema";
 import { ReliabilitySummary } from "@/features/reliability/ReliabilitySummary";
 import { getReliabilityScore } from "@/features/reliability/reliabilityApi";
 import type { ReliabilityScore } from "@/features/reliability/reliabilitySchema";
@@ -26,7 +27,7 @@ export function PublicProfilePage() {
       try {
         const [loadedProfile, loadedReliabilityScore] = await Promise.all([
           getPublicProfile(userId),
-          getReliabilityScore(userId)
+          getReliabilityScore(userId).catch(() => null)
         ]);
 
         if (!isMounted) {
@@ -62,6 +63,8 @@ export function PublicProfilePage() {
     return <p role="status">{t("profile.notFound")}</p>;
   }
 
+  const publicLocations = getPublicLocations(profile);
+
   return (
     <section className="page-section" aria-labelledby="profile-title">
       <div className="profile-heading">
@@ -79,7 +82,49 @@ export function PublicProfilePage() {
           <dd>{new Date(profile.createdAt).toLocaleDateString()}</dd>
         </div>
       </dl>
+      <section className="profile-regions" aria-labelledby="profile-regions-title">
+        <div>
+          <h2 id="profile-regions-title">{t("profile.publicRegions")}</h2>
+          <p>{t("profile.publicRegionsIntro")}</p>
+        </div>
+        {publicLocations.length === 0 ? (
+          <p role="status">{t("profile.noPublicLocations")}</p>
+        ) : (
+          <ul className="profile-region-list">
+            {publicLocations.map((location) => (
+              <li key={location.id}>
+                <div className="profile-region-heading">
+                  <strong>{location.publicRegion}</strong>
+                  {location.isDefault ? <span className="status-pill">{t("profile.defaultRegion")}</span> : null}
+                </div>
+                <ProfileRegionMap location={location} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
       <ReliabilitySummary score={reliabilityScore} />
     </section>
   );
+}
+
+function getPublicLocations(profile: PublicProfile): PublicProfileLocation[] {
+  if (profile.locations.length > 0) {
+    return profile.locations;
+  }
+
+  if (!profile.publicRegion) {
+    return [];
+  }
+
+  return [
+    {
+      id: `profile-region-${profile.id}`,
+      publicRegion: profile.publicRegion,
+      regionCenterLat: "",
+      regionCenterLng: "",
+      isDefault: true,
+      sortOrder: 0
+    }
+  ];
 }

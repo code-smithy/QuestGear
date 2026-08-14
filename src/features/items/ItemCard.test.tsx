@@ -46,8 +46,8 @@ describe("ItemCard", () => {
       "href",
       "/items/item-1"
     );
+    expect(screen.getByRole("link", { name: "Mara" })).toHaveAttribute("href", "/users/user-1");
     expect(screen.getByText("Miniaturen")).toBeInTheDocument();
-    expect(screen.getByText("Mara")).toBeInTheDocument();
   });
 
   it("marks items owned by the current user", () => {
