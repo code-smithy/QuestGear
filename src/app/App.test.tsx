@@ -26,11 +26,14 @@ vi.mock("@/lib/supabase", () => ({
       signInWithOAuth: supabaseState.signInWithOAuth,
       signOut: supabaseState.signOut
     },
-    from: vi.fn(() => {
+    from: vi.fn((table: string) => {
       const query = {
         select: vi.fn(() => query),
         eq: vi.fn(() => query),
-        maybeSingle: vi.fn(() => Promise.resolve({ data: supabaseState.profileRow, error: null }))
+        order: vi.fn(() => Promise.resolve({ data: [], error: null })),
+        maybeSingle: vi.fn(() =>
+          Promise.resolve({ data: table === "profiles" ? supabaseState.profileRow : null, error: null })
+        )
       };
 
       return query;

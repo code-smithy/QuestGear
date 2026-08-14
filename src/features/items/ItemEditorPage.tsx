@@ -35,21 +35,31 @@ export function ItemEditorPage() {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const defaultValues = useMemo(
-    () => getDefaultItemFormValues(profile?.publicRegion ?? "", profile?.preferredCurrency),
-    [profile?.preferredCurrency, profile?.publicRegion]
+    () => {
+      const defaultLocation = profile?.locations.find((location) => location.isDefault) ?? profile?.locations[0];
+      return getDefaultItemFormValues(
+        defaultLocation?.publicRegion ?? profile?.publicRegion ?? "",
+        profile?.preferredCurrency,
+        defaultLocation?.id ?? ""
+      );
+    },
+    [profile?.locations, profile?.preferredCurrency, profile?.publicRegion]
   );
   const {
     control,
     formState: { errors, isSubmitting },
     handleSubmit,
     register,
-    reset
+    reset,
+    setValue,
+    watch
   } = useForm<ItemFormValues>({
     resolver: zodResolver(itemFormSchema),
     defaultValues
   });
   const contents = useFieldArray({ control, name: "contents" });
   const damage = useFieldArray({ control, name: "damage" });
+  const selectedLocationId = watch("locationId");
 
   useEffect(() => {
     let isMounted = true;
@@ -88,6 +98,14 @@ export function ItemEditorPage() {
       isMounted = false;
     };
   }, [defaultValues, itemId, reset, user?.id]);
+
+  useEffect(() => {
+    const selectedLocation = profile?.locations.find((location) => location.id === selectedLocationId);
+
+    if (selectedLocation) {
+      setValue("publicRegion", selectedLocation.publicRegion, { shouldValidate: true });
+    }
+  }, [profile?.locations, selectedLocationId, setValue]);
 
   if (!user) {
     return <Navigate to="/login" replace />;
@@ -155,6 +173,17 @@ export function ItemEditorPage() {
               {itemConditions.map((condition) => (
                 <option key={condition} value={condition}>
                   {t(conditionLabelKeys[condition])}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            <span>{t("item.location")}</span>
+            <select {...register("locationId")}>
+              <option value="">{t("item.locationManual")}</option>
+              {(profile?.locations ?? []).map((location) => (
+                <option key={location.id} value={location.id}>
+                  {location.label} - {location.publicRegion}
                 </option>
               ))}
             </select>
@@ -341,6 +370,7 @@ function detailToFormValues(item: ItemDetail): ItemFormValues {
     maximumLoanDays: item.maximumLoanDays,
     replacementValue: item.replacementValue ?? "",
     replacementValueCurrency: item.replacementValueCurrency ?? "EUR",
+    locationId: item.locationId ?? "",
     contents: item.contents.length
       ? item.contents.map((entry) => ({
           name: entry.name,

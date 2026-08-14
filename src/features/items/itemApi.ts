@@ -115,7 +115,19 @@ export async function getItemDetail(itemId: string): Promise<ItemDetail | null> 
     throw new Error("Could not load item.");
   }
 
-  return data ? mapItemDetail(data as unknown as ItemRow) : null;
+  if (!data) {
+    return null;
+  }
+
+  const { data: locationData } = await supabase
+    .from("item_location_assignments")
+    .select("profile_location_id")
+    .eq("item_id", itemId)
+    .maybeSingle();
+
+  const locationId = getAssignedLocationId(locationData);
+
+  return mapItemDetail(data as unknown as ItemRow, locationId);
 }
 
 export async function saveItem(ownerId: string, values: ItemFormValues, itemId?: string): Promise<string> {
@@ -147,10 +159,22 @@ export async function saveItem(ownerId: string, values: ItemFormValues, itemId?:
   }
 
   const savedItemId = getSavedItemId(data);
+  await saveItemLocationAssignment(savedItemId, values.locationId || null);
   await replaceItemContents(savedItemId, values.contents);
   await replaceItemDamage(savedItemId, values.damage);
 
   return savedItemId;
+}
+
+async function saveItemLocationAssignment(itemId: string, locationId: string | null) {
+  const { error } = await supabase.rpc("save_item_location_assignment", {
+    p_item_id: itemId,
+    p_profile_location_id: locationId
+  });
+
+  if (error) {
+    throw new Error("Could not save item location.");
+  }
 }
 
 async function replaceItemContents(itemId: string, contents: ItemFormValues["contents"]) {
@@ -219,6 +243,19 @@ function getSavedItemId(value: unknown): string {
   throw new Error("Saved item did not return an id.");
 }
 
+function getAssignedLocationId(value: unknown): string | null {
+  if (
+    typeof value === "object" &&
+    value !== null &&
+    "profile_location_id" in value &&
+    typeof value.profile_location_id === "string"
+  ) {
+    return value.profile_location_id;
+  }
+
+  return null;
+}
+
 function mapItemSummary(row: ItemRow): ItemSummary {
   return {
     id: row.id,
@@ -245,9 +282,10 @@ function mapItemSummary(row: ItemRow): ItemSummary {
   };
 }
 
-function mapItemDetail(row: ItemRow): ItemDetail {
+function mapItemDetail(row: ItemRow, locationId: string | null): ItemDetail {
   return {
     ...mapItemSummary(row),
+    locationId,
     contents: (row.item_contents ?? [])
       .map((entry) => ({
         id: entry.id,

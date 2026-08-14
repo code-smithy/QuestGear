@@ -25,10 +25,58 @@ export const profileFormSchema = z.object({
     .max(30, "profile.validation.reminderLeadDays"),
   browserPushEnabled: z.boolean(),
   preferredLocale: z.enum(locales),
-  preferredCurrency: z.enum(supportedCurrencies)
+  preferredCurrency: z.enum(supportedCurrencies),
+  locations: z
+    .array(
+      z.object({
+        id: z.string().optional(),
+        label: z.string().trim().min(1, "profile.validation.locationLabel").max(80, "profile.validation.locationLabel"),
+        privateAddress: z.string().trim().max(500, "profile.validation.locationAddress").optional(),
+        mapUrl: z.string().trim().url("profile.validation.locationMapUrl").max(1000).optional().or(z.literal("")),
+        publicRegion: z.string().trim().min(1, "profile.validation.locationRegion").max(100, "profile.validation.locationRegion"),
+        regionCenterLat: z.preprocess(
+          (value) => (value === "" || value === undefined ? "" : Number(value)),
+          z.number().min(-90).max(90).or(z.literal(""))
+        ),
+        regionCenterLng: z.preprocess(
+          (value) => (value === "" || value === undefined ? "" : Number(value)),
+          z.number().min(-180).max(180).or(z.literal(""))
+        ),
+        isDefault: z.boolean()
+      })
+    )
+    .max(10)
+    .default([])
+})
+.superRefine((values, context) => {
+  if (values.locations.length === 0) {
+    return;
+  }
+
+  const defaultCount = values.locations.filter((location) => location.isDefault).length;
+  if (defaultCount !== 1) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "profile.validation.locationDefault",
+      path: ["locations"]
+    });
+  }
 });
 
 export type ProfileFormValues = z.infer<typeof profileFormSchema>;
+export type ProfileLocation = {
+  id: string;
+  label: string;
+  privateAddress: string | null;
+  mapUrl: string | null;
+  publicRegion: string;
+  regionCenterLat: number | "";
+  regionCenterLng: number | "";
+  isDefault: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export type Profile = {
   id: string;
@@ -43,6 +91,7 @@ export type Profile = {
   accountStatus: "active" | "suspended" | "deleted";
   preferredLocale: ProfileFormValues["preferredLocale"];
   preferredCurrency: SupportedCurrency;
+  locations: ProfileLocation[];
   createdAt: string;
   updatedAt: string;
 };
@@ -68,7 +117,17 @@ export function toProfileFormValues(profile: Profile): ProfileFormValues {
     reminderLeadDays: profile.reminderLeadDays,
     browserPushEnabled: profile.browserPushEnabled,
     preferredLocale: profile.preferredLocale,
-    preferredCurrency: profile.preferredCurrency
+    preferredCurrency: profile.preferredCurrency,
+    locations: profile.locations.map((location) => ({
+      id: location.id,
+      label: location.label,
+      privateAddress: location.privateAddress ?? "",
+      mapUrl: location.mapUrl ?? "",
+      publicRegion: location.publicRegion,
+      regionCenterLat: location.regionCenterLat ?? "",
+      regionCenterLng: location.regionCenterLng ?? "",
+      isDefault: location.isDefault
+    }))
   };
 }
 
@@ -85,6 +144,19 @@ export function getDefaultProfileFormValues(options: {
     reminderLeadDays: 2,
     browserPushEnabled: false,
     preferredLocale: options.locale,
-    preferredCurrency: defaultCurrency
+    preferredCurrency: defaultCurrency,
+    locations: []
+  };
+}
+
+export function getDefaultProfileLocation(publicRegion = ""): ProfileFormValues["locations"][number] {
+  return {
+    label: "",
+    privateAddress: "",
+    mapUrl: "",
+    publicRegion,
+    regionCenterLat: "",
+    regionCenterLng: "",
+    isDefault: true
   };
 }

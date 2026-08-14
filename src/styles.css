@@ -286,6 +286,33 @@ h2 {
   font-weight: 500;
 }
 
+.profile-location-fieldset {
+  display: grid;
+  gap: 1rem;
+  border: 1px solid #ddd6c8;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #fffdfa;
+}
+
+.profile-location-fieldset legend {
+  padding: 0 0.25rem;
+  font-weight: 900;
+}
+
+.profile-location-fieldset p {
+  margin-bottom: 0;
+  color: #4c564f;
+}
+
+.profile-location-row {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+}
+
+.compact-checkbox {
+  margin-top: 0;
+}
+
 .profile-form input:focus-visible,
 .profile-form select:focus-visible,
 .profile-form textarea:focus-visible {

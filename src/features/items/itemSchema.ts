@@ -59,7 +59,8 @@ export const itemFormSchema = z.object({
   replacementValueCurrency: z.enum(supportedCurrencies),
   contents: z.array(itemContentSchema).min(1, "item.validation.contentsRequired"),
   damage: z.array(itemDamageSchema),
-  state: z.enum(itemStates)
+  state: z.enum(itemStates),
+  locationId: z.string().optional()
 });
 
 export type ItemFormValues = z.infer<typeof itemFormSchema>;
@@ -91,11 +92,12 @@ export type ItemSummary = {
 };
 
 export type ItemDetail = ItemSummary & {
+  locationId: string | null;
   contents: Array<ItemContentFormValues & { id: string; sortOrder: number }>;
   damage: Array<ItemDamageFormValues & { id: string }>;
 };
 
-export function getDefaultItemFormValues(region = "", currency = defaultCurrency): ItemFormValues {
+export function getDefaultItemFormValues(region = "", currency = defaultCurrency, locationId = ""): ItemFormValues {
   return {
     title: "",
     description: "",
@@ -113,7 +115,8 @@ export function getDefaultItemFormValues(region = "", currency = defaultCurrency
     replacementValueCurrency: currency,
     contents: [{ name: "", quantity: 1, condition: "good", note: "" }],
     damage: [],
-    state: "draft"
+    state: "draft",
+    locationId
   };
 }
 
