@@ -4,6 +4,7 @@ import { useAuth } from "@/features/auth/useAuth";
 import { getItemDetail } from "@/features/items/itemApi";
 import { categoryLabelKeys, conditionLabelKeys, severityLabelKeys, stateLabelKeys } from "@/features/items/itemLabels";
 import type { ItemDetail } from "@/features/items/itemSchema";
+import { LoanRequestPanel } from "@/features/loans/LoanRequestPanel";
 import { useI18n } from "@/lib/i18n/useI18n";
 
 export function ItemDetailPage() {
@@ -79,14 +80,12 @@ export function ItemDetailPage() {
               <Link className="secondary-button button-link" to={`/items/${item.id}/edit`}>
                 {t("item.edit")}
               </Link>
-            ) : (
-              <button type="button" className="primary-button" disabled>
-                {t("item.requestComingSoon")}
-              </button>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
+
+      <LoanRequestPanel itemId={item.id} isRequestable={!isOwner && item.state === "published"} />
 
       <dl className="detail-facts">
         <div>

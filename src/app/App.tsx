@@ -7,11 +7,13 @@ import { HomePage } from "@/features/home/HomePage";
 import { InventoryPage } from "@/features/inventory/InventoryPage";
 import { ItemDetailPage } from "@/features/items/ItemDetailPage";
 import { ItemEditorPage } from "@/features/items/ItemEditorPage";
+import { LoanDetailPage } from "@/features/loans/LoanDetailPage";
 import { LoginPage } from "@/features/auth/LoginPage";
 import { OnboardingPage } from "@/features/profiles/OnboardingPage";
 import { PlaceholderPage } from "@/features/shared/PlaceholderPage";
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
 import { PublicProfilePage } from "@/features/profiles/PublicProfilePage";
+import { RequestsPage } from "@/features/loans/RequestsPage";
 import { SettingsPage } from "@/features/profiles/SettingsPage";
 import { I18nProvider } from "@/lib/i18n/I18nProvider";
 
@@ -46,9 +48,9 @@ export function App() {
                   <Route path="/items/new" element={<ItemEditorPage />} />
                   <Route path="/items/:itemId" element={<ItemDetailPage />} />
                   <Route path="/items/:itemId/edit" element={<ItemEditorPage />} />
-                  <Route path="/requests" element={<PlaceholderPage titleKey="routes.requests" />} />
+                  <Route path="/requests" element={<RequestsPage />} />
                   <Route path="/loans" element={<PlaceholderPage titleKey="routes.loans" />} />
-                  <Route path="/loans/:loanId" element={<PlaceholderPage titleKey="routes.loanDetail" />} />
+                  <Route path="/loans/:loanId" element={<LoanDetailPage />} />
                   <Route path="/notifications" element={<PlaceholderPage titleKey="routes.notifications" />} />
                   <Route path="/users/:userId" element={<PublicProfilePage />} />
                   <Route path="/settings" element={<SettingsPage />} />

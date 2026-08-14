@@ -562,6 +562,37 @@ h2 {
   color: #4c564f;
 }
 
+.loan-request-panel,
+.request-card {
+  border: 1px solid #ddd6c8;
+  border-radius: 8px;
+  padding: 1rem;
+  background: #fffdfa;
+}
+
+.compact-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.compact-form label {
+  display: grid;
+  gap: 0.35rem;
+  color: #39443d;
+  font-weight: 800;
+}
+
+.compact-form input,
+.compact-form textarea {
+  width: 100%;
+  border: 1px solid #cfc6b5;
+  border-radius: 6px;
+  padding: 0.65rem 0.75rem;
+  color: #17211b;
+  background: #fffdfa;
+}
+
 .profile-heading {
   display: flex;
   align-items: center;
@@ -620,6 +651,7 @@ h2 {
   .profile-form,
   .filter-bar,
   .item-form fieldset,
+  .compact-form,
   .item-grid,
   .item-detail-hero {
     grid-template-columns: 1fr;
