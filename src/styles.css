@@ -619,6 +619,13 @@ h2 {
   font-weight: 800;
 }
 
+.filter-bar .filter-checkbox {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  align-self: end;
+  min-height: 2.75rem;
+}
+
 .filter-bar input,
 .filter-bar select,
 .item-form input,
@@ -632,6 +639,13 @@ h2 {
   color: #17211b;
   background: #fffdfa;
   font-weight: 500;
+}
+
+.filter-bar .filter-checkbox input {
+  min-height: auto;
+  width: 1.15rem;
+  height: 1.15rem;
+  padding: 0;
 }
 
 .item-form {

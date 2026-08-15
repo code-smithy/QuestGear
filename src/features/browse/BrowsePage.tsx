@@ -18,6 +18,7 @@ export function BrowsePage() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<ItemCategory | "all">("all");
   const [region, setRegion] = useState("");
+  const [hideOwnItems, setHideOwnItems] = useState(false);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
 
   useEffect(() => {
@@ -54,9 +55,10 @@ export function BrowsePage() {
       items.filter((item) => {
         const matchesCategory = category === "all" || item.category === category;
         const matchesRegion = !region.trim() || item.publicRegion.toLowerCase().includes(region.toLowerCase());
-        return matchesCategory && matchesRegion && itemMatchesSearch(item, search);
+        const matchesOwnership = !hideOwnItems || item.ownerId !== user?.id;
+        return matchesCategory && matchesRegion && matchesOwnership && itemMatchesSearch(item, search);
       }),
-    [category, items, region, search]
+    [category, hideOwnItems, items, region, search, user?.id]
   );
 
   return (
@@ -86,6 +88,14 @@ export function BrowsePage() {
         <label>
           <span>{t("item.publicRegion")}</span>
           <input value={region} onChange={(event) => setRegion(event.target.value)} />
+        </label>
+        <label className="filter-checkbox">
+          <input
+            type="checkbox"
+            checked={hideOwnItems}
+            onChange={(event) => setHideOwnItems(event.target.checked)}
+          />
+          <span>{t("browse.hideOwnItems")}</span>
         </label>
       </div>
 
